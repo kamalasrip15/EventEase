@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlanZilla</title>
+  <link rel="stylesheet" href="main.css">
+  <link rel="icon" href="pzb.png">
+  <script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
+</head>
+<body>
+  <div id="auth-screen">
+    <img src="pzb.png" alt="PlanZilla Logo" class="logo">
+    <button id="authorize_button" onclick="handleAuthClick()">Get Started</button>
+  </div>
+
+  <div id="main-content" style="display: none;">
+    <header>
+      <div class="header-left">
+        <!-- Move PlanZilla Logo to the extreme left -->
+        <img src="pzb.png" alt="PlanZilla Logo" class="logo">
+      </div>
+      <div class="header-center">
+        <!-- Center content (empty if no text in header) -->
+      </div>
+      <div class="header-right">
+        <label id="filter_label" style="display: none;">
+          Filter by Date:
+          <input type="date" id="filter_date" onchange="filterEventsByDate()" placeholder="Select a date to filter events">
+        </label>
+        <label id="filter_month_label" style="display: none;">
+          Filter by Month:
+          <select id="filter_month" onchange="filterEventsByMonth()">
+            <option value="">Select a month</option>
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </select>
+        </label>
+        <button id="refresh_button" onclick="resetFilters()">Reset filters</button>
+      </div>
+    </header>   
+
+    <main>
+      <div class="search-container-wrapper">
+        <div class="search-container">
+          <input type="text" id="search_input" placeholder="Search events" onkeyup="filterEventsBySearch()">
+          <button id="search_button" onclick="filterEventsBySearch()">Search</button>
+        </div>
+      </div>
+    
+      <table id="events_table" style="display: none;">
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Date</th>
+            <th>Day</th>
+            <th>Time</th>
+            <th>Location / Meet Link</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </main>
+    
+    <div class="bottom-left-buttons">
+      <button id="back_button" onclick="backPageAction()">Back</button>
+      <button id="next_button" onclick="nextPageAction()">Next</button>
+    </div>
+    <button id="signout_button" onclick="handleSignoutClick()" style="display: none;">Sign Out</button>
+  </div>
+
+<div id="eventModal" class="modal">
+  <div class="modal-content">
+    <h2 id="modalEventName">Event Name</h2>
+    <p><strong>Date:</strong> <span id="modalEventDate"></span></p>
+    <p><strong>Time:</strong> <span id="modalEventTime"></span></p>
+    <p><strong>Location:</strong> <span id="modalEventLocation"></span></p>
+    <p><strong>Meet Link:</strong> <span id="modalEventMeetLink"></span></p> <!-- Added -->
+    <p><strong>Description:</strong> <span id="modalEventDescription"></span></p>
+    <p><strong>Guests:</strong></p>
+    <ul id="modalGuestList"></ul> <!-- Guest list section -->
+  </div>
+</div>
+
+  <script src="app.js"></script>
+</body>
+</html>

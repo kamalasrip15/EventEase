@@ -1,0 +1,434 @@
+/* General Reset */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+}
+
+/* Auth Screen */
+#auth-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(45deg, #4285F4, #34a853);
+  color: white;
+}
+
+.title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: regular;
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.tagline {
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+#authorize_button {
+  padding: 10px 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  background-color: #34a853;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center text and icon */
+  margin-left: 20px; /* Added left margin to shift the button to the right */
+}
+
+#authorize_button::after {
+  content: '→'; /* Right arrow character */
+  margin-left: 5px; /* Space between text and arrow */
+  font-size: 24px;
+}
+
+/* Button Hover Effect */
+#authorize_button:hover {
+  background-color: #2a8c43;
+}
+
+header .logo {
+  width: 120px; /* Adjust width as needed */
+  height: auto; /* Maintain aspect ratio */
+}
+
+/* Main Content */
+#main-content header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 20px 0px 20px;
+  background-color: #4285F4;
+  color: white;
+}
+
+#main-content main {
+  padding: 10px 20px; /* Reduced top and bottom padding */
+}
+
+/* Positioning Search Container above the Table */
+.search-container-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px; /* Reduced space between search container and the table */
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  margin-top: 0; /* Removed top margin */
+  margin-bottom: 0; /* Removed bottom margin */
+}
+
+#search_input {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+  flex: 1;
+}
+
+#search_button {
+  padding: 8px 12px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+}
+
+#search_button:hover {
+  background-color: #45a049;
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0; /* Reduced margin at the top */
+  margin-bottom: 10px; /* Reduced margin at the bottom */
+}
+
+#refresh_button,
+#signout_button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#refresh_button {
+  padding: 5px 15px; /* Reduced padding to make the button smaller */
+  font-size: 14px; /* Smaller font size */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #fbbc05;
+  color: black;
+  margin-left: 15px; /* Space between buttons */
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#refresh_button:hover {
+  background-color: #e1a204;
+}
+
+/* General button styles for pagination */
+#back_button, #next_button, #signout_button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: absolute; /* Change to absolute for better control */
+  background-color: grey;
+  color: black;
+  z-index: 1000; /* Ensure buttons are above other elements */
+}
+
+/* Specific position for the Back button */
+#back_button {
+  bottom: 20px;
+  left: 20px;
+  background-color: grey;
+}
+
+/* Specific position for the Next button */
+#next_button {
+  bottom: 20px;
+  left: 100px; /* Increased spacing to prevent overlap */
+  background-color: #45a049;
+  color: white;
+}
+
+/* Specific position for the Sign Out button */
+#signout_button {
+  bottom: 20px;
+  right: 20px;
+  background-color: #d32f2f;
+  color: white;
+}
+
+/* Ensure buttons don’t overlap with the table */
+.main-content {
+  position: relative;
+  padding-bottom: 80px; /* Add padding to the bottom to accommodate buttons */
+}
+
+/* Hover effects */
+#back_button:hover {
+  background-color: #808080;
+}
+
+#next_button:hover {
+  background-color: #3e8e41;
+}
+
+#signout_button:hover {
+  background-color: #b71c1c;
+}
+
+/* General Table Styling */
+#events_table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0; /* Reduced top and bottom margins */
+  font-size: 16px;
+  text-align: left;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+#events_table thead {
+  background-color: #1E90FF; /* Changed background to DodgerBlue */
+  color: #FFFFE0; /* Changed font color to LightYellow */
+}
+
+#events_table th, #events_table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+}
+
+/* Adjust column widths */
+#events_table th:nth-child(1),
+#events_table td:nth-child(1) {
+  width: 15%; /* Event Name */
+}
+
+#events_table th:nth-child(2),
+#events_table td:nth-child(2) {
+  width: 10%; /* Date */
+}
+
+#events_table th:nth-child(3),
+#events_table td:nth-child(3) {
+  width: 10%; /* Day */
+}
+
+#events_table th:nth-child(4),
+#events_table td:nth-child(4) {
+  width: 15%; /* Time */
+}
+
+#events_table th:nth-child(5),
+#events_table td:nth-child(5) {
+  width: 50%; /* Location / Meet Link */
+  white-space: pre-line; /* Preserve line breaks */
+  word-wrap: break-word; /* Break long text */
+  overflow: hidden; /* Prevent overflow */
+}
+
+#events_table th {
+  text-transform: uppercase;
+  font-weight: bold;
+  background-color: #4682B4; /* Added individual column heading background color */
+  color: #FFFFFF; /* Added individual column heading font color */
+}
+
+#events_table tbody tr {
+  transition: background-color 0.2s ease-in-out;
+}
+
+#events_table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#events_table tbody tr:hover {
+  background-color: #e0f7fa;
+}
+
+/* Styling Links in the Table */
+#events_table td:nth-child(5) a {
+  color: #1a73e8;
+  text-decoration: none;
+  font-weight: bold;
+  display: block; /* Ensure links stack vertically */
+}
+
+#events_table td:nth-child(5) a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #events_table thead {
+    display: none;
+  }
+
+  #events_table tbody tr {
+    display: block;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  #events_table td {
+    display: block;
+    text-align: right;
+    font-size: 14px;
+    padding: 10px;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+  }
+
+  #events_table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    text-transform: uppercase;
+    position: absolute;
+    left: 10px;
+    text-align: left;
+  }
+
+  #events_table td:last-child {
+    border-bottom: none;
+  }
+}
+
+/* Toolbar Styling */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f4f4f4;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+/* Default (Light) Theme */
+:root {
+  --bg-color: #f4f4f9;
+  --text-color: #333;
+  --header-bg: #4285F4;
+  --header-text: #fff;
+  --table-bg: #f9f9f9;
+  --table-hover-bg: #e0f7fa;
+}
+
+/* Dark Theme */
+body.dark-mode {
+  --bg-color: #121212;
+  --text-color: #f4f4f9;
+  --header-bg: #1c1c1c;
+  --header-text: #bbb;
+  --table-bg: #1e1e1e;
+  --table-hover-bg: #333;
+}
+
+/* Apply Variables */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+header {
+  background-color: var(--header-bg);
+  color: var(--header-text);
+}
+
+table {
+  background-color: var(--table-bg);
+}
+
+#events_table tbody tr:hover {
+  background-color: var(--table-hover-bg);
+}
+
+/* Hide modal by default */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4); /* Background overlay */
+}
+
+/* Modal content */
+.modal-content {
+  background-color: white;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Adjust width as needed */
+}
+
+/* Close button */
+.close-button {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#week_range {
+  font-size: 18px;
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+#week_summary {
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+#week_summary span {
+  font-weight: bold;
+}
+
+#week_summary p {
+  margin-bottom: 10px;
+}
+
+#week_summary li {
+  margin-bottom: 8px;
+}
