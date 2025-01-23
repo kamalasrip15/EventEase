@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 8080;
 const oauth2Client = new google.auth.OAuth2(
   process.env.CLIENT_ID,
   process.env.CLIENT_SECRET,
-  'https://planzilla2.0.onrender.com/oauth2callback' // Update with production URL later
+  'https://planzilla2-0.onrender.com/oauth2callback' // Update with production URL later
 );
 
 const calendar = google.calendar('v3');
