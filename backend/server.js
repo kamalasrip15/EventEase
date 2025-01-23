@@ -2,7 +2,7 @@ const express = require('express');
 const { google } = require('googleapis');
 const dotenv = require('dotenv');
 const path = require('path');
-
+const cors = require('cors');
 dotenv.config();
 
 const app = express();
@@ -16,6 +16,10 @@ const oauth2Client = new google.auth.OAuth2(
 );
 
 const calendar = google.calendar('v3');
+app.use(cors({
+  origin: ['https://planzilla.onrender.com', 'http://localhost:8080'], // Allow your Render domain
+  methods: ['GET', 'POST'], // Specify methods if needed
+}));
 
 // Middleware to parse request bodies
 app.use(express.json());
