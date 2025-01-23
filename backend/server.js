@@ -17,7 +17,7 @@ const oauth2Client = new google.auth.OAuth2(
 
 const calendar = google.calendar('v3');
 app.use(cors({
-  origin: ['https://planzilla.onrender.com', 'http://localhost:8080'], // Allow your Render domain
+  origin: ['https://planzilla2-0.onrender.com', 'http://localhost:8080'], // Allow your Render domain
   methods: ['GET', 'POST'], // Specify methods if needed
 }));
 
