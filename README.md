@@ -59,6 +59,12 @@ PlanZilla is a web application that simplifies calendar management by integratin
 
 ---
 
+## Local Installation
+- Clone the repo
+- cd backend
+- npm install
+- node server.js
+
 ## Usage
 
 - **Log in** using your Google account.
