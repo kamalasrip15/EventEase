@@ -48,8 +48,9 @@ function handleAuthClick() {
     document.getElementById('filter_month_label').style.display = 'inline-block';
     document.getElementById('signout_button').style.display = 'block';
 
-    // List events
-    await listUpcomingEvents();
+    // List all events, but filter for today's events
+    await listUpcomingEvents();  // Fetch all events
+    filterTodayEvents();         // Filter and show today's events by default
   };
 
   if (gapi.client.getToken() === null) {
@@ -68,29 +69,21 @@ function handleSignoutClick() {
   }
 }
 
-let currentPageToken = null; // To track the current page
-let nextPageToken = null;    // To track the next page
-let previousPageTokenStack = []; // To store previous page tokens for navigation
-
-// async function listUpcomingEvents() {
-//   const response = await fetch('/calendar');
-//   const events = await response.json();
-  
-//   // Proceed with displaying the events as before
-//   displayEvents(events);
-// }
+let currentPageToken = null;
+let nextPageToken = null;
+let previousPageTokenStack = [];
 
 async function listUpcomingEvents(pageToken = null) {
   let response;
   try {
     response = await gapi.client.calendar.events.list({
       calendarId: 'primary',
-      timeMin: new Date().toISOString(),
+      timeMin: '1970-01-01T00:00:00Z',  // Fetch all events starting from the epoch date
       showDeleted: false,
       singleEvents: true,
-      maxResults: 6,
+      maxResults: 250, // Adjust as needed for larger calendars
       orderBy: 'startTime',
-      pageToken: pageToken, // Add pageToken to API request
+      pageToken: pageToken, // Paginate results
     });
   } catch (err) {
     document.getElementById('main-content').innerHTML = `<p>${err.message}</p>`;
@@ -106,70 +99,26 @@ async function listUpcomingEvents(pageToken = null) {
     previousPageTokenStack.push(currentPageToken);
   }
 
-  // Display the events for the current page
+  // Store events
   events = response.result.items || [];
-  displayEvents(events);
-
-  // Update button states
+  displayEvents(events); // Display all events by default
   updatePaginationButtons();
 }
 
-function updatePaginationButtons() {
-  const backButton = document.getElementById('back_button');
-  const nextButton = document.getElementById('next_button');
+// Function to filter and display today's events
+function filterTodayEvents() {
+  const today = new Date();
+  const todayStr = today.toDateString();
 
-  // Enable/disable buttons based on page token availability
-  backButton.disabled = previousPageTokenStack.length === 0; // Disable back if no previous page
-  nextButton.disabled = !nextPageToken; // Disable next if no next page
+  const todayEvents = events.filter(event => {
+    const eventDate = new Date(event.start.dateTime || event.start.date);
+    return eventDate.toDateString() === todayStr;
+  });
+
+  displayEvents(todayEvents);
 }
 
-function nextPageAction() {
-  if (nextPageToken) {
-    listUpcomingEvents(nextPageToken);
-  }
-}
-
-function backPageAction() {
-  // Navigate back by popping the last page token from the stack
-  if (previousPageTokenStack.length > 0) {
-    const previousPageToken = previousPageTokenStack.pop(); // Get the previous page token
-    listUpcomingEvents(previousPageToken); // Use previous page token to load the previous page
-  }
-}
-
-
-
-
-
-
-function getEventDuration(startDate, endDate) {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-
-  // Check if the event is an All Day event (both start and end dates are the same)
-  if (start.toDateString() === end.toDateString()) {
-    // Check if the event starts and ends at the same time (e.g., 5:30 AM to 5:30 AM)
-    if (start.getHours() === 5 && start.getMinutes() === 30 && end.getHours() === 5 && end.getMinutes() === 30) {
-      return 'All Day'; // Special case for "All Day" events
-    }
-    return `${formatTime(start)} to ${formatTime(end)}`; // Regular event time range
-  }
-
-  // If the event spans multiple days, return the formatted start time
-  return `${formatTime(start)} to ${formatTime(end)}`;
-}
-
-function formatTime(date) {
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  const formattedHours = hours % 12 || 12; // Convert 24-hour format to 12-hour
-  const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-
-  return `${formattedHours}:${formattedMinutes} ${ampm}`;
-}
-
-
+// Display events in the table
 function displayEvents(eventsToShow) {
   const tableBody = document.querySelector('#events_table tbody');
   tableBody.innerHTML = '';
@@ -181,48 +130,28 @@ function displayEvents(eventsToShow) {
 
   eventsToShow.forEach((event) => {
     const eventDate = event.start.dateTime || event.start.date;
-    const eventEndDate = event.end.dateTime || event.end.date;
-
-    // Debug logs to check the values
-    console.log('Event start:', eventDate);
-    console.log('Event end:', eventEndDate);
-
-    // Build location and meet link in separate lines if both are present
-    let locationAndMeet = '';
-    if (event.location) {
-      locationAndMeet += `${event.location}`;
-    }
-    if (event.hangoutLink) {
-      locationAndMeet += locationAndMeet ? `\n<a href="${event.hangoutLink}" target="_blank">Join Meet</a>` : `<a href="${event.hangoutLink}" target="_blank">Join Meet</a>`;
-    }
-    if (!locationAndMeet) {
-      locationAndMeet = '------';
-    }
-
-    // Get event duration using the new function
-    const eventDuration = getEventDuration(eventDate, eventEndDate);
+    const formattedDate = eventDate ? formatDate(eventDate) : 'Unknown';
+    const formattedDay = eventDate ? formatDay(eventDate) : 'Unknown';
+    const locationAndMeet = event.location || event.hangoutLink || 'No Location/Link';
+    const eventDuration = getEventDuration(event);
 
     // Create table row for each event
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${event.summary || 'No Title'}</td>
-      <td>${formatDate(eventDate)}</td>
-      <td>${formatDay(eventDate)}</td>
-      <td>${eventDuration}</td> <!-- Display formatted duration -->
+      <td>${formattedDate}</td>
+      <td>${formattedDay}</td>
+      <td>${eventDuration}</td>
       <td>${locationAndMeet}</td>
     `;
 
-    // Add event listener for row click
-    row.addEventListener("click", () => {
-      openModal(event);
-    });
-
+    // Add event listener for row click to open modal
+    row.addEventListener("click", () => openModal(event));
     tableBody.appendChild(row);
   });
 
   document.getElementById('events_table').style.display = 'table';
 }
-
 
 function formatDate(dateStr) {
   const date = new Date(dateStr);
@@ -234,6 +163,13 @@ function formatDay(dateStr) {
   return date.toLocaleDateString('en-IN', { weekday: 'long' });
 }
 
+function getEventDuration(event) {
+  if (event.start.dateTime && event.end?.dateTime) {
+    return `${formatTime(event.start.dateTime)} to ${formatTime(event.end.dateTime)}`;
+  }
+  return 'All Day';
+}
+
 function formatTime(dateStr) {
   const date = new Date(dateStr);
   return date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
@@ -242,22 +178,29 @@ function formatTime(dateStr) {
 function filterEventsByDate() {
   const selectedDate = new Date(document.getElementById('filter_date').value);
   if (isNaN(selectedDate)) {
-    displayEvents(events);
+    filterTodayEvents();  // If no valid date, show today's events
     return;
   }
 
+  const selectedDateStr = selectedDate.toDateString();
   const filteredEvents = events.filter((event) => {
     const eventDate = new Date(event.start.dateTime || event.start.date);
-    return eventDate.toDateString() === selectedDate.toDateString();
+    return eventDate.toDateString() === selectedDateStr;
   });
 
   displayEvents(filteredEvents);
 }
 
+function resetFilters() {
+  document.getElementById('filter_date').value = '';
+  document.getElementById('filter_month').value = '';
+  filterTodayEvents(); // Show today's events again
+}
+
 function filterEventsByMonth() {
   const selectedMonth = parseInt(document.getElementById('filter_month').value);
   if (isNaN(selectedMonth)) {
-    displayEvents(events);
+    displayEvents(events);  // If no month selected, show all events
     return;
   }
 
@@ -269,34 +212,25 @@ function filterEventsByMonth() {
   displayEvents(filteredEvents);
 }
 
-function filterEventsBySearch() {
-  const searchTerm = document.getElementById("search_input").value.toLowerCase();
-  const eventsTable = document.getElementById("events_table");
-  const rows = eventsTable.querySelectorAll("tbody tr");
+function updatePaginationButtons() {
+  const backButton = document.getElementById('back_button');
+  const nextButton = document.getElementById('next_button');
 
-  if (!rows.length) {
-    console.error("No rows found in the table.");
-    return;
+  backButton.disabled = previousPageTokenStack.length === 0; 
+  nextButton.disabled = !nextPageToken;
+}
+
+function nextPageAction() {
+  if (nextPageToken) {
+    listUpcomingEvents(nextPageToken);
   }
+}
 
-  rows.forEach(row => {
-    const cells = row.querySelectorAll("td");
-
-    if (!cells.length) {
-      console.error("No cells found in a row.");
-      return;
-    }
-
-    const rowContent = Array.from(cells).map(cell => cell.textContent.toLowerCase());
-
-    const matches = rowContent.some(content => content.includes(searchTerm));
-
-    if (matches) {
-      row.style.display = ""; 
-    } else {
-      row.style.display = "none";
-    }
-  });
+function backPageAction() {
+  if (previousPageTokenStack.length > 0) {
+    const previousPageToken = previousPageTokenStack.pop();
+    listUpcomingEvents(previousPageToken);
+  }
 }
 
 function openModal(event) {
@@ -322,11 +256,11 @@ function openModal(event) {
 
   // Populate guest list
   const guestListContainer = document.getElementById('modalGuestList');
-  guestListContainer.innerHTML = ''; // Clear previous list
+  guestListContainer.innerHTML = ''; 
   if (event.attendees && event.attendees.length > 0) {
     event.attendees.forEach(attendee => {
       const listItem = document.createElement('li');
-      listItem.textContent = attendee.email; // Display attendee email
+      listItem.textContent = attendee.email; 
       guestListContainer.appendChild(listItem);
     });
   } else {
@@ -339,24 +273,14 @@ function openModal(event) {
   document.getElementById('eventModal').style.display = 'block';
 }
 
-
-
 function closeModal() {
   // Hide the modal by setting display to none
   document.getElementById('eventModal').style.display = 'none';
 }
 
-// Close the modal if the user clicks anywhere outside of the modal content
 window.onclick = function(event) {
-  if (event.target == document.getElementById('eventModal')) {
+  const modal = document.getElementById('eventModal');
+  if (modal && event.target === modal) {
     closeModal();
   }
-}
-
-
-// Function to reset all filters and show all events
-function resetFilters() {
-  document.getElementById('filter_date').value = '';
-  document.getElementById('filter_month').value = '';
-  displayEvents(events); // Show all events again
 }
