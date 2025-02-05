@@ -57,12 +57,40 @@ app.get('/oauth2callback', async (req, res) => {
 // API endpoint to fetch calendar events
 app.get('/calendar', async (req, res) => {
   try {
-    const events = await calendar.events.list({
+    const { date } = req.query;  // The selected date (format: YYYY-MM-DD)
+    let timeMin, timeMax;
+
+    if (date) {
+      // If a date is provided, filter for that day
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);  // Set time to start of the day (00:00)
+
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);  // Set time to end of the day (23:59)
+
+      timeMin = startOfDay.toISOString();
+      timeMax = endOfDay.toISOString();
+    } else {
+      // If no date is provided, fetch today's events only
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);  // Set time to start of the day (00:00)
+      timeMin = today.toISOString();
+      timeMax = new Date(today).setHours(23, 59, 59, 999);  // End of today
+    }
+
+    // Fetch the events based on time range
+    const response = await calendar.events.list({
       calendarId: 'primary',
+      timeMin: timeMin,
+      timeMax: timeMax,
+      maxResults: 250,  // Adjust based on your needs
       singleEvents: true,
       orderBy: 'startTime',
     });
-    res.json(events.data.items);
+
+    res.json({
+      events: response.data.items,
+    });
   } catch (error) {
     console.error('Error fetching events:', error);
     res.status(500).send('Failed to fetch events');
