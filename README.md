@@ -84,13 +84,3 @@ PlanZilla is live and ready to use! Access the deployed application here:
 
 Watch a short video demonstrating the features and functionality of PlanZilla:
 - **Demo Video**: [PlanZilla Demo](https://www.youtube.com/watch?v=2UdP7BsIgmo)
-
-
-## Future Enhancements
-
-- Event creation and editing directly from PlanZilla.
-- Multi-calendar support for managing multiple Google Calendar accounts.
-- Notifications and reminders for upcoming events.
-- Dark mode for better accessibility.
-
----
